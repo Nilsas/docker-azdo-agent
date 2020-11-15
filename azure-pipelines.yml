@@ -1,41 +1,41 @@
 trigger:
-    - master
+  - master
   
-  variables:
-    azure-devops-agent-version: "2.177.0"
-    terraform-version: "0.13.5"
+variables:
+  azure-devops-agent-version: "2.177.0"
+  terraform-version: "0.13.5"
   
-  stages:
-  - stage: Build
-    displayName: Build Agent Image
-    jobs:  
-    - job: Build
-      displayName: Build Agent Container Image
-      pool:
-        vmImage: "ubuntu-latest"
-      steps:
-        - task: Docker@2
-          displayName: Build images
-          inputs:
-            containerRegistry: "docker-hub"
-            repository: "azdo-agent"
-            command: "build"
-            Dockerfile: "./Dockerfile"
-            arguments: --build-arg AGENT_VERSION=$(azure-devops-agent-version) --build-arg TERRAFORM_VERSION=$(terraform-version)
-            tags: |
-              latest
-              $(build.buildNumber)              
-              $(build.buildNumber)-terraformf$(terraform-version)
-              $(build.buildNumber)-terraformf$(terraform-version)-azdo$(azure-devops-agent-version)
-        - task: Docker@2
-          displayName: Push images
-          inputs:
-            containerRegistry: "docker-hub"
-            repository: "azdo-agent"
-            command: "push"
-            Dockerfile: "./Dockerfile"
-            tags: |
-              latest
-              $(build.buildNumber)              
-              $(build.buildNumber)-terraformf$(terraform-version)
-              $(build.buildNumber)-terraformf$(terraform-version)-azdo$(azure-devops-agent-version)
+stages:
+- stage: Build
+  displayName: Build Agent Image
+  jobs:  
+  - job: Build
+    displayName: Build Agent Container Image
+    pool:
+      vmImage: "ubuntu-latest"
+    steps:
+      - task: Docker@2
+        displayName: Build images
+        inputs:
+          containerRegistry: "docker-hub"
+          repository: "azdo-agent"
+          command: "build"
+          Dockerfile: "./Dockerfile"
+          arguments: --build-arg AGENT_VERSION=$(azure-devops-agent-version) --build-arg TERRAFORM_VERSION=$(terraform-version)
+          tags: |
+            latest
+            $(build.buildNumber)              
+            $(build.buildNumber)-terraformf$(terraform-version)
+            $(build.buildNumber)-terraformf$(terraform-version)-azdo$(azure-devops-agent-version)
+      - task: Docker@2
+        displayName: Push images
+        inputs:
+          containerRegistry: "docker-hub"
+          repository: "azdo-agent"
+          command: "push"
+          Dockerfile: "./Dockerfile"
+          tags: |
+            latest
+            $(build.buildNumber)              
+            $(build.buildNumber)-terraformf$(terraform-version)
+            $(build.buildNumber)-terraformf$(terraform-version)-azdo$(azure-devops-agent-version)
