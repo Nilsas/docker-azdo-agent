@@ -2,8 +2,8 @@ trigger:
     - master
   
   variables:
-    - azure-devops-agent-version: "2.177.0"
-    - terraform-version: "0.13.5"
+    azure-devops-agent-version: "2.177.0"
+    terraform-version: "0.13.5"
   
   stages:
   - stage: Build
