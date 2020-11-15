@@ -18,7 +18,7 @@ stages:
         displayName: Build images
         inputs:
           containerRegistry: "docker-hub"
-          repository: "azdo-agent"
+          repository: "nilsas/azdo-agent"
           command: "build"
           Dockerfile: "./Dockerfile"
           arguments: --build-arg AGENT_VERSION=$(azure-devops-agent-version) --build-arg TERRAFORM_VERSION=$(terraform-version)
@@ -31,7 +31,7 @@ stages:
         displayName: Push images
         inputs:
           containerRegistry: "docker-hub"
-          repository: "azdo-agent"
+          repository: "nilsas/azdo-agent"
           command: "push"
           Dockerfile: "./Dockerfile"
           tags: |
