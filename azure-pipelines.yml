@@ -24,7 +24,7 @@ stages:
           arguments: --build-arg AGENT_VERSION=$(azure-devops-agent-version) --build-arg TERRAFORM_VERSION=$(terraform-version)
           tags: |
             latest
-            $(build.buildNumber)              
+            $(build.buildNumber)
             $(build.buildNumber)-terraformf$(terraform-version)
             $(build.buildNumber)-terraformf$(terraform-version)-azdo$(azure-devops-agent-version)
       - task: Docker@2
@@ -36,6 +36,6 @@ stages:
           Dockerfile: "./Dockerfile"
           tags: |
             latest
-            $(build.buildNumber)              
+            $(build.buildNumber)
             $(build.buildNumber)-terraformf$(terraform-version)
             $(build.buildNumber)-terraformf$(terraform-version)-azdo$(azure-devops-agent-version)
