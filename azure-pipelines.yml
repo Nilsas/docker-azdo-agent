@@ -4,6 +4,7 @@ trigger:
 variables:
   azure-devops-agent-version: "2.177.0"
   terraform-version: "0.13.5"
+  ansible-version: "2.9.10"
   
 stages:
 - stage: Build
@@ -21,12 +22,12 @@ stages:
           repository: "nilsas/azdo-agent"
           command: "build"
           Dockerfile: "./Dockerfile"
-          arguments: --build-arg AGENT_VERSION=$(azure-devops-agent-version) --build-arg TERRAFORM_VERSION=$(terraform-version)
+          arguments: --build-arg AGENT_VERSION=$(azure-devops-agent-version) --build-arg TERRAFORM_VERSION=$(terraform-version) --build-arg ANSIBLE_VERSION=$(ansible-version)
           tags: |
             latest
             $(build.buildNumber)
-            $(build.buildNumber)-terraformf$(terraform-version)
-            $(build.buildNumber)-terraformf$(terraform-version)-azdo$(azure-devops-agent-version)
+            $(build.buildNumber)-tf$(terraform-version)
+            $(build.buildNumber)-tf$(terraform-version)-azdo$(azure-devops-agent-version)-an$(ansible-version)
       - task: Docker@2
         displayName: Push images
         inputs:
@@ -37,5 +38,5 @@ stages:
           tags: |
             latest
             $(build.buildNumber)
-            $(build.buildNumber)-terraformf$(terraform-version)
-            $(build.buildNumber)-terraformf$(terraform-version)-azdo$(azure-devops-agent-version)
+            $(build.buildNumber)-tf$(terraform-version)
+            $(build.buildNumber)-tf$(terraform-version)-azdo$(azure-devops-agent-version)-an$(ansible-version)
