@@ -1,12 +1,12 @@
 ## Container running Azure DevOps Agent with Terraform
-Agent has just the minimal installations needed to run Azure DevOps Agent and Terraform
+Agent has just the minimal installations needed to run Azure DevOps Agent with Terraform and Ansible
 Built on `python:slim-buster`
 
 [![Build Status](https://dev.azure.com/NilsasFirantas/Skyless/_apis/build/status/Nilsas.docker-azdo-agent?branchName=master)](https://dev.azure.com/NilsasFirantas/Skyless/_build/latest?definitionId=20&branchName=master)
 
 ### Tagging
-Each release has it's build number from Azure DevOps, Agent version and Terraform version
-* `latest`, `20201115.6`, `20201115.6-terraformf0.13.5`, `20201115.6-terraformf0.13.5-azdo2.177.0`
+Each release has it's build number from Azure DevOps, Agent Terraform and Ansible versions
+* `latest`, `20201115.6`, `20201115.6-tf0.13.5`, `20201115.6-tf0.13.5-azdo2.177.0-an2.9.10`
 
 ### Software:
 - Terraform
