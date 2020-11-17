@@ -6,7 +6,10 @@ WORKDIR /agent
 RUN adduser --disabled-password --uid 1234 --gecos "" agent
 RUN set -ex \
   && apt-get update \
-  && apt-get install git curl unzip -y \
+  && apt-get install git curl unzip python3-pip -y \
+  && pip3 install --upgrade pip \
+  && pip3 install pywinrm \
+  && pip3 install ansible \
   && curl -SL https://vstsagentpackage.azureedge.net/agent/$AGENT_VERSION/vsts-agent-linux-x64-$AGENT_VERSION.tar.gz --output vsts-agent-linux-x64-$AGENT_VERSION.tar.gz \
   && tar xzf vsts-agent-linux-x64-$AGENT_VERSION.tar.gz \
   && ./bin/installdependencies.sh \
