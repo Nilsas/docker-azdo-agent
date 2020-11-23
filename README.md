@@ -4,17 +4,6 @@ Built on `python:slim-buster`
 
 [![Build Status](https://dev.azure.com/NilsasFirantas/Skyless/_apis/build/status/Nilsas.docker-azdo-agent?branchName=master)](https://dev.azure.com/NilsasFirantas/Skyless/_build/latest?definitionId=20&branchName=master)
 
-### Tagging
-Each release has it's build number from Azure DevOps, Agent Terraform and Ansible versions
-* `latest`, `20201115.6`, `20201115.6-tf0.13.5`, `20201115.6-tf0.13.5-azdo2.177.0-an2.9.10`
-
-### Software:
-- Terraform
-- git 
-- curl 
-- unzip
-- python3
-
 ### Running
 
 For the agent to correctly join the Organizations agent pool you need to provide following environment variables:
@@ -32,3 +21,18 @@ docker run \
   -e AZDO_AGENT_NAME='MyAwesomeAgent01'
   -it nilsas/azdo-agent
 ```
+
+### Tagging
+Each release has it's build number from Azure DevOps, Agent Terraform and Ansible versions
+* `latest`, `20201115.6`, `20201115.6-tf0.13.5`, `20201115.6-tf0.13.5-azdo2.177.0-an2.9.10`
+
+## Available Docker image versions
+In this repository you can find a few flavours of Azure DevOps agent, having multiple capabilities.
+This is an overview:
+| Flavour | Inherits | Additional capabilities |
+|---------|----------|-------------------------|
+| base | - | `git`, `curl` |
+| tools | base | `powershell 7`, `az-cli` |
+| infra | tools | `terraform`, `terragrunt` |
+| config | tools | `ansible` |
+| aio | all | - |
