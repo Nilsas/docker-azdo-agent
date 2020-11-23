@@ -7,21 +7,52 @@ variables:
   ansible-version: "2.9.10"
   
 stages:
-- stage: Build
-  displayName: Build Agent Image
+- stage: BuildBaseImage
+  displayName: Agent - Base
   jobs:  
   - job: Build
-    displayName: Build Agent Container Image
+    displayName: Build & Push
     pool:
       vmImage: "ubuntu-latest"
     steps:
       - task: Docker@2
-        displayName: Build images
+        displayName: Build image
         inputs:
           containerRegistry: "docker-hub"
           repository: "nilsas/azdo-agent"
           command: "build"
           Dockerfile: "./Dockerfile"
+          arguments: --build-arg AGENT_VERSION=$(azure-devops-agent-version)
+          tags: |
+            latest
+            $(build.buildNumber)
+            $(build.buildNumber)-azdo$(azure-devops-agent-version)
+      - task: Docker@2
+        displayName: Push image
+        inputs:
+          containerRegistry: "docker-hub"
+          repository: "nilsas/azdo-agent"
+          command: "push"
+          Dockerfile: "./Dockerfile"
+          tags: |
+            latest
+            $(build.buildNumber)
+            $(build.buildNumber)-azdo$(azure-devops-agent-version)
+- stage: BuildAOIImage
+  displayName: Agent - All tools
+  jobs:  
+  - job: Build
+    displayName: Build & Push
+    pool:
+      vmImage: "ubuntu-latest"
+    steps:
+      - task: Docker@2
+        displayName: Build image
+        inputs:
+          containerRegistry: "docker-hub"
+          repository: "nilsas/azdo-agent"
+          command: "build"
+          Dockerfile: "./Dockerfile-aio"
           arguments: --build-arg AGENT_VERSION=$(azure-devops-agent-version) --build-arg TERRAFORM_VERSION=$(terraform-version) --build-arg ANSIBLE_VERSION=$(ansible-version)
           tags: |
             latest
@@ -29,12 +60,12 @@ stages:
             $(build.buildNumber)-tf$(terraform-version)
             $(build.buildNumber)-tf$(terraform-version)-azdo$(azure-devops-agent-version)-an$(ansible-version)
       - task: Docker@2
-        displayName: Push images
+        displayName: Push image
         inputs:
           containerRegistry: "docker-hub"
           repository: "nilsas/azdo-agent"
           command: "push"
-          Dockerfile: "./Dockerfile"
+          Dockerfile: "./Dockerfile-aio"
           tags: |
             latest
             $(build.buildNumber)
