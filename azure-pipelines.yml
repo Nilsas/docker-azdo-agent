@@ -88,10 +88,10 @@ stages:
           Dockerfile: "./Dockerfile-aio"
           arguments: --build-arg AGENT_VERSION=$(azure-devops-agent-version) --build-arg TERRAFORM_VERSION=$(terraform-version) --build-arg ANSIBLE_VERSION=$(ansible-version)
           tags: |
-            latest
-            $(build.buildNumber)
-            $(build.buildNumber)-tf$(terraform-version)
-            $(build.buildNumber)-tf$(terraform-version)-azdo$(azure-devops-agent-version)-an$(ansible-version)
+            latest-aio
+            $(build.buildNumber)-aio
+            $(build.buildNumber)-aio-tf$(terraform-version)
+            $(build.buildNumber)-aio-tf$(terraform-version)-azdo$(azure-devops-agent-version)-an$(ansible-version)
       - task: Docker@2
         displayName: Push image
         inputs:
@@ -100,7 +100,7 @@ stages:
           command: "push"
           Dockerfile: "./Dockerfile-aio"
           tags: |
-            latest
-            $(build.buildNumber)
-            $(build.buildNumber)-tf$(terraform-version)
-            $(build.buildNumber)-tf$(terraform-version)-azdo$(azure-devops-agent-version)-an$(ansible-version)
+            latest-aio
+            $(build.buildNumber)-aio
+            $(build.buildNumber)-aio-tf$(terraform-version)
+            $(build.buildNumber)-aio-tf$(terraform-version)-azdo$(azure-devops-agent-version)-an$(ansible-version)
