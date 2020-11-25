@@ -5,6 +5,8 @@ variables:
   azure-devops-agent-version: "2.177.0"
   terraform-version: "0.13.5"
   ansible-version: "2.9.10"
+  powershell-version: "7.1.0"
+  powershell-az-version: "5.1.0"
   
 stages:
 - stage: BuildBaseImage
@@ -38,6 +40,37 @@ stages:
             latest
             $(build.buildNumber)
             $(build.buildNumber)-azdo$(azure-devops-agent-version)
+- stage: BuildToolImage
+  displayName: Agent - Tools
+  jobs:  
+  - job: Build
+    displayName: Build & Push
+    pool:
+      vmImage: "ubuntu-latest"
+    steps:
+      - task: Docker@2
+        displayName: Build image
+        inputs:
+          containerRegistry: "docker-hub"
+          repository: "nilsas/azdo-agent"
+          command: "build"
+          Dockerfile: "./Dockerfile-tools"
+          arguments: --build-arg AGENT_VERSION=$(azure-devops-agent-version) --build-arg PS_VERSION=$(powershell-version) --build-arg PS_AZ_VERSION=$(powershell-az-version)
+          tags: |
+            latest-tools
+            $(build.buildNumber)-tools
+            $(build.buildNumber)-tools-azdo$(azure-devops-agent-version)-ps$(powershell-version)-az$(powershell-az-version)
+      - task: Docker@2
+        displayName: Push image
+        inputs:
+          containerRegistry: "docker-hub"
+          repository: "nilsas/azdo-agent"
+          command: "push"
+          Dockerfile: "./Dockerfile-tools"
+          tags: |
+            latest-tools
+            $(build.buildNumber)-tools
+            $(build.buildNumber)-tools-azdo$(azure-devops-agent-version)-ps$(powershell-version)-az$(powershell-az-version)
 - stage: BuildAOIImage
   displayName: Agent - All tools
   jobs:  
