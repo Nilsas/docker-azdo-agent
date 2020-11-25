@@ -32,7 +32,7 @@ This is an overview:
 | Flavour | Inherits | Additional capabilities |
 |---------|----------|-------------------------|
 | base | - | `git`, `curl` |
-| tools | base | `powershell 7`, `az-cli` |
+| tools | base | `powershell 7`, `PS Az module` |
 | infra | tools | `terraform`, `terragrunt` |
 | config | tools | `ansible` |
 | aio | all | - |

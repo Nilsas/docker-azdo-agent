@@ -1,0 +1,29 @@
+FROM python:slim-buster
+ARG AGENT_VERSION
+ARG PS_VERSION
+ARG PS_AZ_VERSION
+LABEL maintainer="nilsas@firantas.lt"
+WORKDIR /agent
+RUN adduser --disabled-password --uid 1234 --gecos "" agent
+RUN set -ex \
+  && apt-get update \
+  && apt-get install git curl gcc g++ -qq -y --no-install-recommends --no-install-suggests \
+  && curl -sSL https://vstsagentpackage.azureedge.net/agent/$AGENT_VERSION/vsts-agent-linux-x64-$AGENT_VERSION.tar.gz -o vsts-agent-linux-x64-$AGENT_VERSION.tar.gz \
+  && tar xzf vsts-agent-linux-x64-$AGENT_VERSION.tar.gz \
+  && ./bin/installdependencies.sh \
+  && chown -R agent:agent /agent \
+  && rm -f vsts-agent-linux-x64-$AGENT_VERSION.tar.gz \
+  && curl -sSL https://github.com/PowerShell/PowerShell/releases/download/v$PS_VERSION/powershell-$PS_VERSION-linux-x64.tar.gz -o powershell.tar.gz \
+  && mkdir -p /opt/microsoft/powershell/7 \
+  && tar zxf powershell.tar.gz -C /opt/microsoft/powershell/7 \
+  && chmod +x /opt/microsoft/powershell/7/pwsh \
+  && ln -s /opt/microsoft/powershell/7/pwsh /usr/bin/pwsh \
+  && rm -f powershell.tar.gz \
+  && pwsh -Command Set-PSRepository -Name PSGallery -InstallationPolicy Trusted \
+  && pwsh -Command Install-Module -Name Az -RequiredVersion $PS_AZ_VERSION -Scope AllUsers -Repository PSGallery \
+  && pwsh -Command Set-PSRepository -Name PSGallery -InstallationPolicy Untrusted \
+  && apt-get autoremove -y \
+  && apt-get clean \
+  && rm -rf /var/lib/apt/lists/*
+USER agent
+ENTRYPOINT ["/bin/bash", "-c", "./config.sh --unattended --url $AZDO_URL --auth pat --token $AZDO_TOKEN --pool $AZDO_POOL --agent $AZDO_AGENT_NAME --acceptTeeEula --replace && unset AZDO_TOKEN && ./run.sh"]
