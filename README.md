@@ -33,6 +33,6 @@ This is an overview:
 |---------|----------|-------------------------|
 | base | - | `git`, `curl` |
 | tools | base | `powershell 7`, `PS Az module` |
-| infra | tools | `terraform`, `terragrunt` |
-| config | tools | `ansible` |
+| infra | base | `terraform`, `terragrunt` |
+| config | base | `ansible` |
 | aio | all | - |

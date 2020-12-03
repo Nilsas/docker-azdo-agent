@@ -4,6 +4,7 @@ trigger:
 variables:
   azure-devops-agent-version: "2.177.0"
   terraform-version: "0.13.5"
+  terragrunt-version: "0.26.7"
   ansible-version: "2.9.10"
   powershell-version: "7.1.0"
   powershell-az-version: "5.1.0"
@@ -40,6 +41,7 @@ stages:
             latest
             $(build.buildNumber)
             $(build.buildNumber)-azdo$(azure-devops-agent-version)
+
 - stage: BuildToolImage
   displayName: Agent - Tools
   jobs:  
@@ -71,6 +73,39 @@ stages:
             latest-tools
             $(build.buildNumber)-tools
             $(build.buildNumber)-tools-azdo$(azure-devops-agent-version)-ps$(powershell-version)-az$(powershell-az-version)
+
+- stage: BuildInfraImage
+  displayName: Agent - Infra
+  jobs:  
+  - job: Build
+    displayName: Build & Push
+    pool:
+      vmImage: "ubuntu-latest"
+    steps:
+      - task: Docker@2
+        displayName: Build image
+        inputs:
+          containerRegistry: "docker-hub"
+          repository: "nilsas/azdo-agent"
+          command: "build"
+          Dockerfile: "./Dockerfile-infra"
+          arguments: --build-arg AGENT_VERSION=$(azure-devops-agent-version) --build-arg TERRAFORM_VERSION=$(terraform-version) --build-arg TERRAGRUNT_VERSION=$(terragrunt-version)
+          tags: |
+            latest-infra
+            $(build.buildNumber)-infra
+            $(build.buildNumber)-infra-azdo$(azure-devops-agent-version)-tf$(terraform-version)-tg$(terragrunt-version)
+      - task: Docker@2
+        displayName: Push image
+        inputs:
+          containerRegistry: "docker-hub"
+          repository: "nilsas/azdo-agent"
+          command: "push"
+          Dockerfile: "./Dockerfile-infra"
+          tags: |
+            latest-infra
+            $(build.buildNumber)-infra
+            $(build.buildNumber)-infra-azdo$(azure-devops-agent-version)-tf$(terraform-version)-tg$(terragrunt-version)
+
 - stage: BuildAOIImage
   displayName: Agent - All tools
   jobs:  
