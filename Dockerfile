@@ -5,12 +5,12 @@ WORKDIR /agent
 RUN adduser --disabled-password --uid 1234 --gecos "" agent
 RUN set -ex \
   && apt-get update \
-  && apt-get install git curl -qq -y --no-install-recommends --no-install-suggests \
+  && apt-get install -qq -y --no-install-recommends --no-install-suggests git curl \
   && curl -sSL https://vstsagentpackage.azureedge.net/agent/$AGENT_VERSION/vsts-agent-linux-x64-$AGENT_VERSION.tar.gz --output vsts-agent-linux-x64-$AGENT_VERSION.tar.gz \
   && tar xzf vsts-agent-linux-x64-$AGENT_VERSION.tar.gz \
+  && rm -f vsts-agent-linux-x64-$AGENT_VERSION.tar.gz \
   && ./bin/installdependencies.sh \
   && chown -R agent:agent /agent \
-  && rm -f vsts-agent-linux-x64-$AGENT_VERSION.tar.gz \
   && apt-get autoremove -y \
   && apt-get clean \
   && rm -rf /var/lib/apt/lists/*

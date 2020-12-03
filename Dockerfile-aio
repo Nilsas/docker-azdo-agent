@@ -7,19 +7,21 @@ WORKDIR /agent
 RUN adduser --disabled-password --uid 1234 --gecos "" agent
 RUN set -ex \
   && apt-get update \
-  && apt-get install git curl unzip python3-pip -y --no-install-recommends \
-  && pip3 install --upgrade pip \
-  && pip3 install pywinrm \
-  && pip3 install ansible==$ANSIBLE_VERSION \
-  && curl -SL https://vstsagentpackage.azureedge.net/agent/$AGENT_VERSION/vsts-agent-linux-x64-$AGENT_VERSION.tar.gz --output vsts-agent-linux-x64-$AGENT_VERSION.tar.gz \
+  && apt-get install git curl unzip python3-pip -y -qq --no-install-recommends --no-install-suggests \
+  && pip3 install --no-cache-dir --no-compile --upgrade pip \
+  && pip3 install --no-cache-dir --no-compile pywinrm \
+  && pip3 install --no-cache-dir --no-compile ansible==$ANSIBLE_VERSION \
+  && curl -sSL https://vstsagentpackage.azureedge.net/agent/$AGENT_VERSION/vsts-agent-linux-x64-$AGENT_VERSION.tar.gz --output vsts-agent-linux-x64-$AGENT_VERSION.tar.gz \
   && tar xzf vsts-agent-linux-x64-$AGENT_VERSION.tar.gz \
   && ./bin/installdependencies.sh \
   && chown -R agent:agent /agent \
-  && curl -SL https://releases.hashicorp.com/terraform/$TERRAFORM_VERSION/terraform_${TERRAFORM_VERSION}_linux_amd64.zip --output terraform.zip \
+  && curl -sSL https://releases.hashicorp.com/terraform/$TERRAFORM_VERSION/terraform_${TERRAFORM_VERSION}_linux_amd64.zip --output terraform.zip \
   && unzip terraform.zip \
   && mv terraform /usr/local/bin \
   && rm -f terraform.zip \
   && rm -f vsts-agent-linux-x64-$AGENT_VERSION.tar.gz \
+  && find /usr/lib/ -name '__pycache__' -print0 | xargs -0 -n1 rm -rf \
+  && find /usr/lib/ -name '*.pyc' -print0 | xargs -0 -n1 rm -rf \
   && apt-get autoremove -y \
   && apt-get clean \
   && rm -rf /var/lib/apt/lists/*
